@@ -4,20 +4,27 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
-    public GameObject player;
-    private float mousePitch;
-    private float mouseYaw;
-    private float mouseSensitivity = 3.0f;
+    private float mouseX;
+    private float mouseY;
+    private float rotationX = 0.0f;
+
+    private float mouseSensitivity = 400.0f;
+    public Transform playerTransform;
 
     void Start()
     {
-        player = this.transform.parent.gameObject;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        mousePitch -=  Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
-        mouseYaw += Input.GetAxisRaw("Mouse X") * mouseSensitivity;
-        transform.eulerAngles = new Vector3(mousePitch, mouseYaw, 0.0f);
+        mouseX = Input.GetAxisRaw("Mouse X") * mouseSensitivity * Time.deltaTime;
+        mouseY = Input.GetAxisRaw("Mouse Y") * mouseSensitivity * Time.deltaTime;
+
+        rotationX -= mouseY;
+        rotationX = Mathf.Clamp(rotationX, -90.0f, 90.0f);
+
+        transform.localRotation = Quaternion.Euler(rotationX, 0.0f, 0.0f);
+        playerTransform.Rotate(Vector3.up * mouseX);
     }
 }
