@@ -15,7 +15,7 @@ public class PlayerCamera : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
     }
-
+   
     void Update()
     {
         mouseX = Input.GetAxisRaw("Mouse X") * mouseSensitivity * Time.deltaTime;
@@ -23,7 +23,7 @@ public class PlayerCamera : MonoBehaviour
 
         rotationX -= mouseY;
         rotationX = Mathf.Clamp(rotationX, -90.0f, 90.0f);
-
+	// Tes
         transform.localRotation = Quaternion.Euler(rotationX, 0.0f, 0.0f);
         playerTransform.Rotate(Vector3.up * mouseX);
     }
