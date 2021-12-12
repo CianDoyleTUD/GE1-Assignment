@@ -6,14 +6,15 @@ using UnityEngine;
 public class AudioReaction : MonoBehaviour
 {
     public AudioSource source;
-    public float average = 0;
+    public ParticleSystem particle;
     public float[] samples = new float[64];
     private int bass = 8; 
-    private float multiplier = 100.0f; 
-    // Start is called before the first frame update
+    private float multiplier = 150.0f; // How much the audio affects the scale
+    private float threshold = 5.0f;
+
     void Start()
     {
-        //StartCoroutine(AudioVisualsRoutine());
+
     }
 
     System.Collections.IEnumerator AudioVisualsRoutine()
@@ -39,8 +40,16 @@ public class AudioReaction : MonoBehaviour
             subSamples.Add(samples[i]);
         }
         
-        Debug.Log(subSamples.Max().ToString());
-        float size = subSamples.Max() * 150;
+        float size = subSamples.Max() * multiplier;
+        if (size > threshold)
+        {
+            ParticleSystem particleSystem = ParticleSystem.Instantiate<ParticleSystem>(particle, transform.position, transform.rotation);
+            particleSystem.transform.parent = this.transform;
+            particleSystem.startSize = Mathf.Clamp(size, 0, 3.0f);
+            var no = particleSystem.noise;
+            no.strength =  Mathf.Clamp(size, 0, 2.0f);
+            Destroy(particleSystem, 2.5f);
+        }
         transform.localScale = Vector3.Lerp (transform.localScale, new Vector3(size, size, size), 5.0f * Time.deltaTime);
     }
 }
