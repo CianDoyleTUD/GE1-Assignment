@@ -11,7 +11,7 @@ public class OrbScript : MonoBehaviour
     public Vector3 spawnPoint;
     public int objectCount; 
     public GameObject orb; // GameObject for storing orb prefab
-    public float orbSpawnRate = 120.0f; // How many orbs spawn per minute
+    public float orbSpawnRate = 2.0f; // How many orbs spawn per minute
     public int maxOrbs = 30; // Maximum amount of orbs in scene before orbs are replaced
     public float orbDecayTime; // Destroy timer required to maintain max orbs in scene correctly
     public List<GameObject> orbittingObjects;
@@ -40,7 +40,7 @@ public class OrbScript : MonoBehaviour
             if (orbsActive)
             {
                 SpawnOrbs(1);
-                Debug.Log("Orb spawned");
+                Debug.Log("Spawned orb");
                 yield return new WaitForSeconds(60.0f / orbSpawnRate);
             }
             yield return null;
