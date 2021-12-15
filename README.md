@@ -13,7 +13,7 @@ The user is able to fly around in the space to get a better appreciation  of the
 
 # Instructions for use:
 
-To try the project out for yourself, simply clone this repository and open the project in unity.
+To try the project out for yourself, simply clone this repository and open the project in unity. Fly up with space and down with shift, wasd to move around.
 
 # Youtube demo 
 https://youtu.be/tfEICLsrw2U
