@@ -26,14 +26,17 @@ public class ProjectileSpawn : MonoBehaviour
     {
         Vector3 offset = new Vector3(0.0f, 0.0f, 8.0f);
         GameObject spawnedProjectile = GameObject.Instantiate<GameObject>(projectile, (spawnPoint.transform.position + offset), spawnPoint.transform.rotation);
-        spawnedProjectile.GetComponent<Rigidbody>().useGravity = false;
+        spawnedProjectile.GetComponent<Rigidbody>().useGravity = true;
         spawnedProjectile.GetComponent<Rigidbody>().freezeRotation = true;
+
         sphereSize = Random.Range(1, 4);
         particle.transform.localScale = new Vector3(sphereSize, sphereSize, sphereSize);
         spawnedProjectile.transform.localScale = new Vector3(sphereSize, sphereSize, sphereSize); 
+        
         ParticleSystem particleSystem = ParticleSystem.Instantiate<ParticleSystem>(particle, spawnedProjectile.transform.position, spawnedProjectile.transform.rotation);
         particleSystem.transform.parent = spawnedProjectile.transform;
         particleSystem.transform.rotation = Quaternion.LookRotation(Vector3.up, Vector3.forward);
+
         Destroy(spawnedProjectile, 30.0f);
         Destroy(particleSystem, 30.0f);
     }

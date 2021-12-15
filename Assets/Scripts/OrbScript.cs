@@ -1,5 +1,7 @@
-/* ORB SCRIPT
- * Responsible for spawning orbs around the map
+/* 
+    OrbScript.cs
+  
+    Responsible for spawning orbs around the map
  */
 using System.Collections;
 using System.Collections.Generic;
@@ -51,7 +53,7 @@ public class OrbScript : MonoBehaviour
     {
         float[] xBounds = new float[] {-70, 70};
         float[] yBounds = new float[] {10, 90};
-        float[] zBounds = new float[] {-70, 70}; // Upper and lower limits for orb spawning coords
+        float[] zBounds = new float[] {-70, 70};
 
         float x = Random.Range(xBounds[0], xBounds[1]);
         float y = Random.Range(yBounds[0], yBounds[1]);
