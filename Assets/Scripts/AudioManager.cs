@@ -9,26 +9,14 @@ public class AudioManager : MonoBehaviour
     public ParticleSystem particle;
     public List<GameObject> visualisers; 
     public Vector3 minScale = new Vector3(1.0f, 1.0f, 1.0f); // Minimum size for visualiser objects
-    private float[] samples = new float[64];
-    private float multiplier = 150.0f; // How much the audio affects the scale
+    public float volume = 0;
+    private float[] samples = new float[512];
+    private float multiplier = 1000.0f; // How much the audio affects the scale
     private float threshold = 5.0f;
 
     void Start()
     {
 
-    }
-
-    // Returns a sub array between the given indexes
-    float[] sliceFloatArray(float[] list, int startIndex, int endIndex)
-    {
-        float[] toReturn = new float[(endIndex - startIndex) + 1];
-        int x = 0;
-        for(int i = startIndex; i <= endIndex; i++)
-        {
-            toReturn[x] = list[i];
-            x++;
-        }
-        return toReturn;
     }
 
     float[] getFrequencyValues(float[] list) 
@@ -48,7 +36,7 @@ public class AudioManager : MonoBehaviour
                 index++;
             }
             float avg = total / index;
-            frequencyValues[i] = avg * 1000.0f;
+            frequencyValues[i] = avg * multiplier;
         }
         return frequencyValues;
     }
@@ -60,6 +48,15 @@ public class AudioManager : MonoBehaviour
 
         AudioListener.GetSpectrumData(samples, 0, FFTWindow.Blackman);
 
+        float total = 0;
+
+        foreach (var sample in samples) 
+        {
+            total += sample * multiplier;
+        }
+
+        volume = Mathf.Clamp((total / 512), 0.0f, 1.0f);
+
         float[] frequencyValues = getFrequencyValues(samples);
         int counter = 0;
 
@@ -67,12 +64,13 @@ public class AudioManager : MonoBehaviour
         {
             float size = frequencyValues[counter];
             obj.transform.localScale = Vector3.Lerp(obj.transform.localScale, new Vector3(size, size, size) + minScale, 3.0f * Time.deltaTime);
+            
             if (size > threshold)
             {
                 ParticleSystem particleSystem = ParticleSystem.Instantiate<ParticleSystem>(particle, obj.transform.position, obj.transform.rotation);
                 particleSystem.transform.parent = obj.transform;
-                var no = particleSystem.noise;
-                no.strength =  Mathf.Clamp(size, 0, 5.0f);
+                var noise = particleSystem.noise;
+                noise.strength =  Mathf.Clamp(size, 0, 5.0f);
                 Destroy(particleSystem, 0.5f * Mathf.Clamp(size/5.0f, 1.0f, 2.0f));
             }
             counter++;

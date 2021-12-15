@@ -1,47 +1,73 @@
+/*  
+    GenerateMesh.cs
+
+    This script is responsible for the creation of the audio-reactive mesh. It creates a basic
+    mesh which covers the entire scene, and when the audio being played gets louder or 
+    quieter, the mesh will rise and fall, with some added randomness to make it look better.
+    The mesh is updated at a pre-defined interval using a co-routine to save some performace.
+*/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GenerateMesh : MonoBehaviour
 {
+    // Necessary variables for creating the mesh
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
-    int meshDensity = 20;
-    private float meshScale = 7.5f;
+
+    public bool meshActive = true; // Whether or not to draw the mesh
+    public float meshUpdateRate = 10.0f; // How many times a second we want to update the mesh
+    private int meshDensity = 20; // The quality of the mesh, aka how many points are in it
+    private float meshScale = 7.5f; // The size of the mesh
+    private float volume = 0; // Placeholder variable for audio volume
+    private AudioManager audioManager; // Placeholder object for retrieving volume
 
     void Start()
     {
+        // Initialising mesh
         mesh = new Mesh();
 		GetComponent<MeshFilter>().mesh = mesh;
-		CreateMesh();
-		UpdateMesh();
+        
+        // Retrieve volume variable from audio script
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        
+        StartCoroutine(meshCreationRoutine());
     }
 
-    void createVertices()
+    // Generates the vertices (points) which define the mesh structure
+    void createVertices(float vol)
     {
         // Create vertex array for mesh points
         int meshVertexCount = (int)Mathf.Pow(meshDensity+1, 2);
         vertices = new Vector3[meshVertexCount];
 
-        // Fill the vertex array with vertices based on scale and density
+        // Fill the vertex array with vertices based on scale, density and volume
         for(int index = 0, i = 0; i <= meshDensity; i++)
         {
             for(int j = 0; j <= meshDensity; j++)
             {
-                vertices[index] = new Vector3(j * meshScale, 0, i * meshScale);
+                float perlin = Mathf.PerlinNoise(j * 0.2f, i * 0.2f);// Used for adding randomness to the mesh 
+                Debug.Log("setting to" + perlin);
+
+                vertices[index] = new Vector3(j * meshScale, perlin * 10.0f, i * meshScale);
                 index++;
             }
         }
     }
 
+    // Generates the triangle vertices for the mesh
     void createTriangles()
     {
+        // Create triangle array which contains 6 points (2 triangles) per square (4 vertices) in the mesh
         int triangleCount = (int)Mathf.Pow(meshDensity, 2) * 6;
 		triangles = new int[triangleCount];
 
 		int quad = 0;
 		int triangleIndex = 0;
+
         // Populate triangle array with appropriate coordinates
 		for (int z = 0; z < meshDensity; z++)
 		{
@@ -63,12 +89,14 @@ public class GenerateMesh : MonoBehaviour
 		}
     }
 
-    void CreateMesh()
+    // Creates the mesh given a value for volume
+    void CreateMesh(float vol)
     {
-        createVertices();
+        createVertices(vol);
         createTriangles();  
-    }
+    }   
 
+    // Updates the mesh info
     void UpdateMesh() {
         mesh.Clear();
 
@@ -78,7 +106,23 @@ public class GenerateMesh : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
+    // Co routine for creating a new mesh 
+    System.Collections.IEnumerator meshCreationRoutine()
+    {
+        while(true)
+        {
+            if (meshActive)
+            {
+                CreateMesh(audioManager.volume);
+		        UpdateMesh();    
+                yield return new WaitForSeconds(1.0f / meshUpdateRate);
+            }
+            yield return null;
+        }
+    }
     
+    /* 
+    // Draw the mesh points with gizmos
     private void OnDrawGizmos() 
     {
         if(vertices == null)
@@ -90,4 +134,5 @@ public class GenerateMesh : MonoBehaviour
             Gizmos.DrawSphere(vertices[i], 0.1f);
         }
     }
+    */
 }
