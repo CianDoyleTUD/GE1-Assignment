@@ -50,9 +50,8 @@ public class GenerateMesh : MonoBehaviour
             for(int j = 0; j <= meshDensity; j++)
             {
                 float perlin = Mathf.PerlinNoise(j * 0.2f, i * 0.2f);// Used for adding randomness to the mesh 
-                Debug.Log("setting to" + perlin);
 
-                vertices[index] = new Vector3(j * meshScale, perlin * 10.0f, i * meshScale);
+                vertices[index] = new Vector3(j * meshScale, perlin * 10.0f * (vol * 5.0f), i * meshScale);
                 index++;
             }
         }
