@@ -15,6 +15,9 @@ The user is able to fly around in the space to get a better appreciation  of the
 
 To try the project out for yourself, simply clone this repository and open the project in unity.
 
+# Youtube demo 
+https://youtu.be/tfEICLsrw2U
+
 # How it works
 
 It's best explained in two parts:
@@ -29,6 +32,9 @@ And once you have these points, you create an array of triangles, which use thes
 we create two opposite triangles, which is done in this function:
 ![image](https://user-images.githubusercontent.com/57116401/146184459-2d3f6adf-ddbc-489f-a2c2-fb9d920ef613.png)
 
+Perlin noise is also used to give the mesh a kind of wave-like appearance:
+![image](https://user-images.githubusercontent.com/57116401/146186314-eb47bb2a-7df1-41d6-9ed8-e9f3874b4a52.png)
+
 The mesh's y value is also affected by volume, which is a variable created in AudioManager script. The mesh is updated in a coroutine,
 which allows us to customise how often the mesh is updated, rather than updating it every frame in Update()
 ![image](https://user-images.githubusercontent.com/57116401/146184778-6092411e-775a-42da-9257-9987abc7724e.png)
@@ -36,6 +42,7 @@ which allows us to customise how often the mesh is updated, rather than updating
 ### The audio processing
 The audio is attached to an AudioSource component, which we can then use to analyse the audio. The main function in this process is:
 ![image](https://user-images.githubusercontent.com/57116401/146184993-f5625d0d-fd71-45cd-8dfa-5437e7d7d8f1.png)
+
 Which returns the frequency values for the audio. This is what is used to modify attached GameObjects, and also the volume
 variable which is used in MeshGenerator.cs. The audio is broken up into different bands, based on the number of visualiser GameObjects attached.
 I chose to use 8 since it works well to represent bass, mids, highs, etc.
@@ -45,6 +52,10 @@ and adding a particle emitter under a certain conidition, which is also reactive
 The result is that different orbs will change size as the bass, mids, or lows change, and emit particles like so:
 ![image](https://user-images.githubusercontent.com/57116401/146185818-1461c2e6-eb78-43c5-b4c1-28eeca4c2e07.png)
 ![image](https://user-images.githubusercontent.com/57116401/146186067-b954f9c2-1653-4d9a-8bfc-4d725bfaf470.png)
+
+The particle emitter is just a looping emitter with some noise added, which uses the same fresnel shader material as the orbs:
+![image](https://user-images.githubusercontent.com/57116401/146186583-227f4ed3-0ada-4f93-b397-e7b4fa956f52.png)
+
 
 
 # List of classes/assets in the project and whether made yourself or modified or if its from a source, please give the reference
